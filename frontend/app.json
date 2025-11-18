@@ -24,7 +24,8 @@
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.akramhasan25.sarthiexpo"
     },
     "ios": {
       "supportsTablet": true,
@@ -37,6 +38,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2407c0b8-d268-4afa-b314-90004d006da7"
+      }
     }
+  },
+  "extra": {
+    "apiUrl": "https://sathi-construction.onrender.com/api"
   }
 }

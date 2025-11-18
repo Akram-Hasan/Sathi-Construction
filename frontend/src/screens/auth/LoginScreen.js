@@ -1,27 +1,44 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import EnhancedInput from '../../components/EnhancedInput';
-import LoadingButton from '../../components/LoadingButton';
-import Toast from '../../components/Toast';
-import { validateEmail, validatePassword, validateRequired, validatePhone } from '../../utils/validation';
-import { authService } from '../../services/authService';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
+import EnhancedInput from "../../components/EnhancedInput";
+import LoadingButton from "../../components/LoadingButton";
+import Toast from "../../components/Toast";
+import {
+  validateEmail,
+  validatePassword,
+  validateRequired,
+  validatePhone,
+} from "../../utils/validation";
+import { authService } from "../../services/authService";
 
 export default function LoginScreen({ onSuccess }) {
   const [isRegister, setIsRegister] = useState(false);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [employeeId, setEmployeeId] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const [toast, setToast] = useState({
+    visible: false,
+    message: "",
+    type: "info",
+  });
 
-  const showToast = (message, type = 'info') => {
+  const showToast = (message, type = "info") => {
     setToast({ visible: true, message, type });
   };
 
@@ -31,12 +48,12 @@ export default function LoginScreen({ onSuccess }) {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (isRegister) {
-      const nameError = validateRequired(name, 'Name');
+      const nameError = validateRequired(name, "Name");
       if (nameError) newErrors.name = nameError;
     }
-    
+
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password, isRegister ? 6 : 3);
 
@@ -54,7 +71,7 @@ export default function LoginScreen({ onSuccess }) {
 
   const handleLogin = async () => {
     if (!validateForm()) {
-      showToast('Please fix the errors in the form', 'error');
+      showToast("Please fix the errors in the form", "error");
       return;
     }
 
@@ -63,24 +80,27 @@ export default function LoginScreen({ onSuccess }) {
 
     try {
       const response = await authService.login(email.trim(), password);
-      
+
       if (response.success) {
-        showToast('Login successful!', 'success');
+        showToast("Login successful!", "success");
         setTimeout(() => {
           onSuccess(response.user.role, response.user);
         }, 500);
       } else {
-        showToast(response.message || 'Login failed', 'error');
+        showToast(response.message || "Login failed", "error");
       }
     } catch (error) {
-      const errorMessage = error.message || error.errors?.[0]?.msg || 'Login failed. Please check your credentials.';
-      showToast(errorMessage, 'error');
-      
+      const errorMessage =
+        error.message ||
+        error.errors?.[0]?.msg ||
+        "Login failed. Please check your credentials.";
+      showToast(errorMessage, "error");
+
       if (error.errors) {
         const newErrors = {};
-        error.errors.forEach(err => {
-          if (err.param === 'email') newErrors.email = err.msg;
-          if (err.param === 'password') newErrors.password = err.msg;
+        error.errors.forEach((err) => {
+          if (err.param === "email") newErrors.email = err.msg;
+          if (err.param === "password") newErrors.password = err.msg;
         });
         setErrors(newErrors);
       }
@@ -91,7 +111,7 @@ export default function LoginScreen({ onSuccess }) {
 
   const handleRegister = async () => {
     if (!validateForm()) {
-      showToast('Please fix the errors in the form', 'error');
+      showToast("Please fix the errors in the form", "error");
       return;
     }
 
@@ -108,26 +128,29 @@ export default function LoginScreen({ onSuccess }) {
       };
 
       const response = await authService.register(userData);
-      
+
       if (response.success) {
-        showToast('Registration successful!', 'success');
+        showToast("Registration successful!", "success");
         setTimeout(() => {
           onSuccess(response.user.role, response.user);
         }, 500);
       } else {
-        showToast(response.message || 'Registration failed', 'error');
+        showToast(response.message || "Registration failed", "error");
       }
     } catch (error) {
-      const errorMessage = error.message || error.errors?.[0]?.msg || 'Registration failed. Please try again.';
-      showToast(errorMessage, 'error');
-      
+      const errorMessage =
+        error.message ||
+        error.errors?.[0]?.msg ||
+        "Registration failed. Please try again.";
+      showToast(errorMessage, "error");
+
       if (error.errors) {
         const newErrors = {};
-        error.errors.forEach(err => {
-          if (err.param === 'name') newErrors.name = err.msg;
-          if (err.param === 'email') newErrors.email = err.msg;
-          if (err.param === 'password') newErrors.password = err.msg;
-          if (err.param === 'phone') newErrors.phone = err.msg;
+        error.errors.forEach((err) => {
+          if (err.param === "name") newErrors.name = err.msg;
+          if (err.param === "email") newErrors.email = err.msg;
+          if (err.param === "password") newErrors.password = err.msg;
+          if (err.param === "phone") newErrors.phone = err.msg;
         });
         setErrors(newErrors);
       }
@@ -139,27 +162,41 @@ export default function LoginScreen({ onSuccess }) {
   const toggleMode = () => {
     setIsRegister(!isRegister);
     setErrors({});
-    setName('');
-    setEmail('');
-    setPassword('');
-    setPhone('');
-    setEmployeeId('');
+    setName("");
+    setEmail("");
+    setPassword("");
+    setPhone("");
+    setEmployeeId("");
   };
 
   return (
     <LinearGradient colors={["#0f172a", "#1e293b"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar style="light" />
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
             <View style={styles.container}>
               <View style={styles.headerWrap}>
                 <View style={styles.logoContainer}>
-                  <Ionicons name="construct-outline" size={48} color="#22c55e" />
+                  <Ionicons
+                    name="construct-outline"
+                    size={48}
+                    color="#22c55e"
+                  />
                 </View>
                 <Text style={styles.brand}>Sathi Constructions</Text>
-                <Text style={styles.subtitle}>Building Excellence Together</Text>
-                <Text style={styles.loginText}>{isRegister ? 'Create your account' : 'Sign in to continue'}</Text>
+                <Text style={styles.subtitle}>
+                  Building Excellence Together
+                </Text>
+                <Text style={styles.loginText}>
+                  {isRegister ? "Create your account" : "Sign in to continue"}
+                </Text>
               </View>
 
               <View style={styles.card}>
@@ -169,7 +206,7 @@ export default function LoginScreen({ onSuccess }) {
                     value={name}
                     onChangeText={(text) => {
                       setName(text);
-                      if (errors.name) setErrors({ ...errors, name: '' });
+                      if (errors.name) setErrors({ ...errors, name: "" });
                     }}
                     placeholder="Enter your full name"
                     icon="person-outline"
@@ -184,7 +221,7 @@ export default function LoginScreen({ onSuccess }) {
                   value={email}
                   onChangeText={(text) => {
                     setEmail(text);
-                    if (errors.email) setErrors({ ...errors, email: '' });
+                    if (errors.email) setErrors({ ...errors, email: "" });
                   }}
                   placeholder="Enter your email"
                   icon="mail-outline"
@@ -199,13 +236,15 @@ export default function LoginScreen({ onSuccess }) {
                   value={password}
                   onChangeText={(text) => {
                     setPassword(text);
-                    if (errors.password) setErrors({ ...errors, password: '' });
+                    if (errors.password) setErrors({ ...errors, password: "" });
                   }}
                   placeholder="Enter your password"
                   icon="lock-closed-outline"
                   secureTextEntry
                   error={errors.password}
-                  helperText={isRegister ? "Minimum 6 characters" : "Minimum 3 characters"}
+                  helperText={
+                    isRegister ? "Minimum 6 characters" : "Minimum 3 characters"
+                  }
                   required
                 />
 
@@ -216,7 +255,7 @@ export default function LoginScreen({ onSuccess }) {
                       value={phone}
                       onChangeText={(text) => {
                         setPhone(text);
-                        if (errors.phone) setErrors({ ...errors, phone: '' });
+                        if (errors.phone) setErrors({ ...errors, phone: "" });
                       }}
                       placeholder="Enter your phone (optional)"
                       icon="call-outline"
@@ -229,7 +268,8 @@ export default function LoginScreen({ onSuccess }) {
                       value={employeeId}
                       onChangeText={(text) => {
                         setEmployeeId(text);
-                        if (errors.employeeId) setErrors({ ...errors, employeeId: '' });
+                        if (errors.employeeId)
+                          setErrors({ ...errors, employeeId: "" });
                       }}
                       placeholder="Enter employee ID (optional)"
                       icon="id-card-outline"
@@ -248,20 +288,19 @@ export default function LoginScreen({ onSuccess }) {
                   style={styles.loginButton}
                 />
 
-                <TouchableOpacity onPress={toggleMode} style={styles.toggleButton}>
+                <TouchableOpacity
+                  onPress={toggleMode}
+                  style={styles.toggleButton}
+                >
                   <Text style={styles.toggleText}>
-                    {isRegister ? 'Already have an account? ' : "Don't have an account? "}
+                    {isRegister
+                      ? "Already have an account? "
+                      : "Don't have an account? "}
                     <Text style={styles.toggleTextBold}>
-                      {isRegister ? 'Sign In' : 'Sign Up'}
+                      {isRegister ? "Sign In" : "Sign Up"}
                     </Text>
                   </Text>
                 </TouchableOpacity>
-              </View>
-
-              <View style={styles.footer}>
-                <Text style={styles.footerText}>Demo Credentials:</Text>
-                <Text style={styles.footerCredential}>Admin: admin@sathi.com / admin123</Text>
-                <Text style={styles.footerCredential}>User: user@sathi.com / user123</Text>
               </View>
             </View>
           </ScrollView>
@@ -280,61 +319,61 @@ export default function LoginScreen({ onSuccess }) {
 const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   headerWrap: {
     marginBottom: 40,
-    alignItems: 'center',
+    alignItems: "center",
   },
   logoContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#0b1220',
+    backgroundColor: "#0b1220",
     borderWidth: 3,
-    borderColor: '#22c55e',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#22c55e",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
-    shadowColor: '#22c55e',
+    shadowColor: "#22c55e",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
   brand: {
-    color: '#e2e8f0',
+    color: "#e2e8f0",
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 4,
   },
   subtitle: {
-    color: '#22c55e',
+    color: "#22c55e",
     marginTop: 4,
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   loginText: {
-    color: '#94a3b8',
+    color: "#94a3b8",
     marginTop: 12,
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   card: {
-    backgroundColor: '#0b1220',
+    backgroundColor: "#0b1220",
     borderRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#1f2937',
-    shadowColor: '#000',
+    borderColor: "#1f2937",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -345,28 +384,28 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerText: {
-    color: '#64748b',
+    color: "#64748b",
     fontSize: 12,
     marginBottom: 8,
   },
   footerCredential: {
-    color: '#94a3b8',
+    color: "#94a3b8",
     fontSize: 11,
     marginTop: 2,
   },
   toggleButton: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   toggleText: {
-    color: '#94a3b8',
+    color: "#94a3b8",
     fontSize: 14,
   },
   toggleTextBold: {
-    color: '#22c55e',
-    fontWeight: '600',
+    color: "#22c55e",
+    fontWeight: "600",
   },
 });
